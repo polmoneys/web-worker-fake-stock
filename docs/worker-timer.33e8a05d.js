@@ -1,0 +1,2 @@
+var e=!0;self.addEventListener("message",(function(t){switch(t.data.cmd){case"start":if(e){var a=(new Date).valueOf();setInterval((function(){const e=(t=a,n=(new Date).valueOf()-t,s=Math.floor(n/1e3/60),o=Math.floor(n/1e3)-60*s,1==(s=s.toString()).length&&(s="0"+s),1==(o=o.toString()).length&&(o="0"+o),`${s} : ${o}`);var t,n,s,o;self.postMessage(e)}),100),e=!1}break;default:self.postMessage("Unknown command")}}),!1);export default{};
+//# sourceMappingURL=worker-timer.33e8a05d.js.map
