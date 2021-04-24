@@ -1,17 +1,17 @@
 if (module.hot) {
   module.hot.accept();
 }
-import * as D from './src/seed';
-import Canvas from './src/components/canvas';
+import * as D from './seed';
+import Canvas from './components/canvas';
 import {
   renderChart,
   renderError,
   renderTimer
-} from './src/components/';
-import store from './src/store/reducer';
-import {askWorker, receiveWorker, notifyError} from './src/store/actions';
+} from './components/';
+import store from './store/reducer';
+import {askWorker, receiveWorker, notifyError} from './store/actions';
 import tinytime from 'tinytime';
-import MathUtil from './src/engine/math';
+import MathUtil from './engine/math';
 
 const templateYear = tinytime('{DD} {MMMM} {YYYY}');
 const NOW = new Date();
@@ -26,8 +26,8 @@ function init() {
       return;
   }
   
-    const worker = new Worker('./src/worker/',{type:'module'}),
-      workerTimer = new Worker('./src/engine/worker-timer',{type:'module'});
+    const worker = new Worker('./worker/',{type:'module'}),
+      workerTimer = new Worker('./engine/worker-timer',{type:'module'});
 
     // CHART LOGIC
     worker.addEventListener(
