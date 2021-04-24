@@ -1,11 +1,11 @@
 var running = true; // 🙏🏽
+    var loop = null;
 
 const timer = start => {
     var curr = new Date().valueOf();
     var diff = curr - start;
     var minutes = Math.floor(diff / 1000 / 60);
     var seconds = Math.floor(diff / 1000) - minutes * 60;
-    var loop = null;
     // if number of minutes less than 10, add a leading "0"
     minutes = minutes.toString();
     if (minutes.length == 1) {
@@ -25,7 +25,7 @@ self.addEventListener(
     var data = e.data;
     switch (data.cmd) {
       case 'start':
-        if (running) { // 🙏🏽
+        if (running) { 
           // get current time
           var now = new Date().valueOf();
           // repeat timer(d0) every 100 ms

@@ -37,6 +37,25 @@ body {
     font-weight: 500;
 }
 
+.canvas-container{
+    width:400px;
+    height:400px;
+    margin-top:16px;
+    outline:2px solid #191919;
+    position:relative;
+    overflow:hidden;
+}
+@media (min-resolution: 2dppx) {
+    .canvas-container{
+        outline:4px solid #191919;
+    }
+}
+canvas{
+  width:100%;
+  height:100%;
+  background-color:rgba(0,0,0,.1);
+}
+
 .txt-cta {
     font-size: 2.5vmax;
 }
@@ -81,7 +100,7 @@ body {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     grid-auto-rows: 140px;
-    gap: 20px;
+    grid-gap: 20px;
 }
 
 .cards-container>div:last-child:nth-child(3n - 2) {
@@ -116,7 +135,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
     grid-auto-rows: 80px;
-    gap: 10px;
+    grid-gap: 10px;
     counter-reset: entries;
 }
 

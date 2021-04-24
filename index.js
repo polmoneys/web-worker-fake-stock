@@ -2,37 +2,43 @@ if (module.hot) {
   module.hot.accept();
 }
 import * as D from './src/seed';
-import Canvas from './src/canvas';
+import Canvas from './src/components/canvas';
 import {
-  render_infographic,
-  render_error,
-  render_timer
-} from './src/components/infographic';
-import { createStore } from 'redux';
-import {
-  default as reducer,
-  push_worker,
-  pull_worker,
-  notify_error
-} from './src/engine/reducer';
+  renderChart,
+  renderError,
+  renderTimer
+} from './src/components/';
+import store from './src/store/reducer';
+import {askWorker, receiveWorker, notifyError} from './src/store/actions';
+import tinytime from 'tinytime';
+import MathUtil from './src/engine/math';
 
-var store = createStore(reducer);
+const templateYear = tinytime('{DD} {MMMM} {YYYY}');
+const NOW = new Date();
 
-function once() {
-  if (window.Worker) {
-    var worker = new Worker('./src/engine/worker.js'),
-      worker_timer = new Worker('./src/engine/worker-timer.js');
+function init() {
+  if(!window.Worker){
+  store.dispatch(
+        notifyError(
+          'This experiment relies on web worker technology that seems to be missing from your browser.'
+        )
+      );
+      return;
+  }
+  
+    const worker = new Worker('./src/worker/',{type:'module'}),
+      workerTimer = new Worker('./src/engine/worker-timer',{type:'module'});
 
     // CHART LOGIC
     worker.addEventListener(
       'error',
-      e => store.dispatch(notify_error(e.message)),
+      e => store.dispatch(notifyError(e.message)),
       false
     );
     worker.addEventListener(
       'message',
       e => {
-        store.dispatch(pull_worker(e.data));
+        store.dispatch(receiveWorker(e.data));
       },
       false
     );
@@ -44,68 +50,61 @@ function once() {
     });
 
     // TIMER LOGIC
-    worker_timer.addEventListener(
+    workerTimer.addEventListener(
       'error',
-      e => store.dispatch(notify_error(e.message)),
+      e => store.dispatch(notifyError(e.message)),
       false
     );
-    worker_timer.addEventListener(
+    workerTimer.addEventListener(
       'message',
       e => {
-        render_timer(e.data);
+        renderTimer(e.data);
       },
       false
     );
-    worker_timer.postMessage({
+    workerTimer.postMessage({
       cmd: 'start'
     });
 
-    store.dispatch(push_worker());
+    store.dispatch(askWorker());
 
     document.querySelector('.button').addEventListener('click', (e)=>{
           worker.postMessage({
               cmd: 'update',
-              chunk: 10
+              chunk: MathUtil.roll(10,100)
           });
           return;
     });
 
+    document.querySelector('.clock').innerHTML = templateYear.render(NOW);
 
-  } else {
-    store.dispatch(
-      notify_error(
-        'This experiment relies on web worker technology that seems to be missing from your browser.'
-      )
-    );
-  }
-
-  store.subscribe(() => loop(store));
-  loop(store);
+  store.subscribe(() => app(store));
+  app(store);
 }
 
-function loop(store) {
-  let mounted = store.getState().mounted;
+function app(store) {
+  const mounted = store.getState().mounted;
 
   if (mounted) {
-    let sorted_entries = store.getState().entries;
-    let active = store.getState().viewport.active;
+    const sortedEntries = store.getState().entries;
+    const active = store.getState().viewport.active;
 
-    let meta = {
+    const meta = {
       min: store.getState().meta.min,
       max: store.getState().meta.max,
       mean: store.getState().meta.mean,
       total: store.getState().meta.total
     };
-    let viewport = {
+    const viewport = {
       min: store.getState().viewport.min,
       max: store.getState().viewport.max,
       mean: store.getState().viewport.mean,
       total: store.getState().viewport.total
     };
 
-    render_infographic(sorted_entries, meta, active);
+    renderChart(sortedEntries, meta, active);
 
-    let options = {
+    const options = {
       name: 'test',
       input: active,
       viewport,
@@ -114,18 +113,18 @@ function loop(store) {
     new Canvas(options);
   } 
 
-    let error = store.getState().error;
-    let notification = document.querySelector('.notification-container');
-
+    // IF ERRORS 
+    const error = store.getState().error;
+    const notification = document.querySelector('.notification-container');
     if (error) {
         notification.style['display'] = 'block';
-        render_error(store.getState().error_msg);
+        renderError(store.getState().error_msg);
     } else {
         notification.style['display'] = 'none';
     }
 }
 
 window.addEventListener('load', function(e) {
-  once();
+  init();
 });
 

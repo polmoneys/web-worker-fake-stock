@@ -1,8 +1,7 @@
 import { html, render } from 'lit-html';
-import geometry, { create_geometry } from "./geometry";
+import geometry, { createGeometry } from "./geometry";
 
 const infographic = (entries, meta, active) => {
-
     const cards = Object.entries(meta).map((entry,i)=>({ 
         id:i,
         key:entry[0],
@@ -36,13 +35,13 @@ const infographic = (entries, meta, active) => {
 const card = (card) => {
   return html`
     <div class="card" key=${card.id}>
-      ${render_content(card.id, card.key,card.value)}
+      ${renderCardContent(card.id, card.key,card.value)}
     </div>
   `;
 };
 
-const render_content = (i,k,v) => {
-      const options = create_geometry({
+const renderCardContent = (i,k,v) => {
+      const options = createGeometry({
         vertices: 3+i,
         size: 48,
         fill: "#ff0055"
@@ -64,28 +63,12 @@ const entry = props => {
   `;
 };
 
-export const render_infographic = (entries, meta, active) =>
+export const renderChart = (entries, meta, active) =>
   render(
     infographic(entries, meta, active),
     document.querySelector('.report-container')
   );
 
-  const notification = msg => {
-    console.log(msg);
-  return html`
-    <p>${msg}</p>
-  `;
-};
 
 
-const timer = moment => {
-  return html`
-    <p class="txt-numbers txt-thin txt-spacing">${moment} </p>
-  `;
-};
 
-export const render_error = msg =>
-  render(notification(msg), document.querySelector('.notification-container'));
-
-export const render_timer = time =>
-  render(timer(time), document.querySelector('.timer-container'));

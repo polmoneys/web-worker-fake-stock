@@ -1,16 +1,17 @@
 {
-  "name": "ChartAndFurious",
+  "name": "web-workers-poc",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.html",
   "license": "MIT",
   "scripts": {
-    "start": " parcel index.html",
-    "build": "parcel build index.html --public-url ./"
+    "start": "parcel index.html",
+    "build": "parcel build index.html --public-url ./dist"
   },
   "dependencies": {
     "lit-html": "^1.1.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "reselect": "^4.0.0"
+    "reselect": "^4.0.0",
+    "tinytime": "^0.2.6"
   }
 }

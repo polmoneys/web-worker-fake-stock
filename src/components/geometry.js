@@ -17,7 +17,7 @@ let num = function(n) {
   return n < 0.0000001 ? 0 : n;
 };
 
-const create_geometry = props => {
+const createGeometry = props => {
   if (props.vertices < 3)
     throw new Error("We need at least 3 vertices to create a shape");
   let size = props.size || 96;
@@ -92,4 +92,4 @@ const Geometry = props => {
 };
 
 export default Geometry;
-export { create_geometry };
+export { createGeometry };

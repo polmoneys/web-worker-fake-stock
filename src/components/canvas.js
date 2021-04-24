@@ -1,6 +1,5 @@
-import MathUtil from './engine/math';
-import { shadeColor } from './engine/color';
-import { picking } from './engine/utils';
+import MathUtil from '../engine/math';
+import { shadeColor } from '../engine/color';
 
 function Canvas(options) {
     this.dpi = window.devicePixelRatio || 1;
@@ -187,7 +186,7 @@ Canvas.prototype.click = function(e) {
         x: e.clientX - this.offset_left,
         y: e.clientY - this.offset_top
     };
-    const hits = picking(this.ctx_pick)(this.hittable)(mouse);
+    const hits = pickingPointer(this.ctx_pick)(this.hittable)(mouse);
     if (hits.length > 0) {
         ctx.clearRect(0, 0, 400, 100);
       this.tooltip(ctx, hits[0].label,250,42, 24, 300);
@@ -201,6 +200,16 @@ Canvas.prototype.destroy = function() {
     // window.removeEventListener('mousemove', this.hover.bind(this), true);
     //  window.removeEventListener("resize", this.resize());
     window.removeEventListener('click', this.click.bind(this), true);
+};
+
+const pickingPointer = ctx => shapes => mouse => {
+    const hitted = [];
+    shapes.map(s => {
+        if (ctx.isPointInPath(s.path, mouse.x, mouse.y)) {
+            hitted.push(s);
+        }
+    });
+    return hitted;
 };
 
 export default Canvas;
